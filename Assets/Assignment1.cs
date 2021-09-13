@@ -1,0 +1,89 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Assignment1 : ProcessingLite.GP21
+{
+    private int timer = 0;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        Background(Color.black);
+        StrokeWeight(2);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        timer++;
+        Shapes();
+        LetterC();
+        LetterA();
+        LetterR();
+        LetterL();
+    }
+
+    private void LetterC()
+    {
+        BeginShape();
+        Vertex(4, 2);
+        Vertex(4, 1);
+        Vertex(1, 1);
+        Vertex(1, 7);
+        Vertex(4, 7);
+        Vertex(4, 6);
+        EndShape();
+    }
+
+    private void LetterA()
+    {
+        BeginShape();
+        Vertex(6, 1);
+        Vertex(6, 7);
+        Vertex(9, 7);
+        Vertex(9, 1);
+        EndShape();
+        Line(6, 4, 9, 4);
+    }
+
+    private void LetterR()
+    {
+        BeginShape();
+        Vertex(11, 1);
+        Vertex(11, 7);
+        Vertex(14, 7);
+        Vertex(14, 4);
+        Vertex(11, 4);
+        Vertex(14, 1);
+        EndShape();
+    }
+
+    private void LetterL()
+    {
+        BeginShape();
+        Vertex(16, 7);
+        Vertex(16, 1);
+        Vertex(19, 1);
+        EndShape();
+    }
+
+    private void Shapes()
+    {
+        if (timer == 100)
+        {
+            NoStroke();
+            var corner1 = new Vector2(Random.Range(0f, 21.21f), Random.Range(0f, 10f));
+            var corner2 = new Vector2(Random.Range(0f, 21.21f), Random.Range(0f, 10f));
+            var corner3 = new Vector2(Random.Range(0f, 21.21f), Random.Range(0f, 10f));
+            var corner4 = new Vector2(Random.Range(0f, 21.21f), Random.Range(0f, 10f));
+            var color = new Vector3Int(Random.Range(0, 255), Random.Range(0, 255), Random.Range(0, 255));
+            Fill(color.x, color.y, color.z);
+            Quad(corner1.x, corner1.y, corner2.x, corner2.y, corner3.x, corner3.y, corner4.x, corner4.y);
+            timer = 0;
+            Stroke(255, 255, 255);
+        }
+
+
+    }
+}
