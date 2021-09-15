@@ -12,15 +12,15 @@ namespace ProcessingLite
 	/// </summary>
 	public class GP21 : MonoBehaviour
 	{
-		public const  int   MAXNumberOfObjects = 500;
-		private const float PointSize          = 0.02f;
-		
+		public const int MAXNumberOfObjects = 500;
+		private const float PointSize = 0.02f;
+
 		public static float PStrokeWeight = 1;           //Processing
-		public static Color PStroke       = Color.white; //Processing
-		public static Color PFill         = Color.black; //Processing
+		public static Color PStroke = Color.white; //Processing
+		public static Color PFill = Color.black; //Processing
 
 		internal static bool DrawStroke = true;
-		internal static bool DrawFill   = true;
+		internal static bool DrawFill = true;
 
 		//Private variables
 		private PLine _pLine;
@@ -59,6 +59,26 @@ namespace ProcessingLite
 			}
 		}
 
+		public float MouseX
+		{
+			get
+			{
+				_cameraRef ??= Camera.main;
+				return _cameraRef.ScreenToWorldPoint(Input.mousePosition).x;
+			}
+		}
+
+		public float MouseY
+		{
+			get
+			{
+				_cameraRef ??= Camera.main;
+				return _cameraRef.ScreenToWorldPoint(Input.mousePosition).y;
+			}
+		}
+
+
+
 		#region draw functions
 
 		/// <summary>
@@ -66,7 +86,7 @@ namespace ProcessingLite
 		/// </summary>
 		/// <param name="rgb">specifies a value between white and black</param>
 		public void Background(int rgb) => Background(rgb, rgb, rgb);
-		
+
 		/// <summary>
 		/// The Background() function sets the color used for the background.
 		/// </summary>
@@ -74,7 +94,7 @@ namespace ProcessingLite
 		/// <param name="g">green</param>
 		/// <param name="b">blue</param>
 		public void Background(int r, int g, int b) => Background(new Color32((byte)r, (byte)g, (byte)b, 255));
-		
+
 		/// <summary>
 		/// The Background() function sets the color used for the background.
 		/// </summary>
@@ -123,7 +143,7 @@ namespace ProcessingLite
 			_pShape.ShapeMode = PShapeMode.Default;
 			_pShape.Shape(true, DrawFill);
 		}
-		
+
 		/// <summary>
 		/// A quad is a quadrilateral, a four sided polygon.
 		/// </summary>
@@ -135,14 +155,14 @@ namespace ProcessingLite
 		{
 			_pShape ??= new PShape();
 			_pShape.ShapeKeys = new List<Vector2>(
-				new[] {pos1, pos2, pos3, pos4}
+				new[] { pos1, pos2, pos3, pos4 }
 				);
 			_pShape.ShapeMode = PShapeMode.Default;
 			_pShape.Shape(true, DrawFill);
 		}
 
 		/// <summary>
-		/// A triangle is a plane created by connecting three points. 
+		/// A triangle is a plane created by connecting three points.
 		/// </summary>
 		/// <param name="x1">x-coordinate of the first corner</param>
 		/// <param name="y1">y-coordinate of the first corner</param>
@@ -162,7 +182,7 @@ namespace ProcessingLite
 			_pShape.ShapeMode = PShapeMode.Default;
 			_pShape.Shape(true, DrawFill);
 		}
-		
+
 		/// <summary>
 		/// A quad is a quadrilateral, a four sided polygon.
 		/// </summary>
@@ -173,12 +193,12 @@ namespace ProcessingLite
 		{
 			_pShape ??= new PShape();
 			_pShape.ShapeKeys = new List<Vector2>(
-				new[] {pos1, pos2, pos3}
+				new[] { pos1, pos2, pos3 }
 			);
 			_pShape.ShapeMode = PShapeMode.Default;
 			_pShape.Shape(true, DrawFill);
 		}
-		
+
 		/// <summary>
 		/// Draws a rectangle to the screen.
 		/// </summary>
@@ -202,7 +222,7 @@ namespace ProcessingLite
 			_pShape.ShapeMode = PShapeMode.Default;
 			_pShape.Shape(true, false);
 		}
-		
+
 		/// <summary>
 		/// Draws a square to the screen.
 		/// </summary>
@@ -406,12 +426,12 @@ namespace ProcessingLite
 	{
 		public delegate void LateReset();
 
-		public const    float ZOffset    = -0.001f; //offset between objects in depth.
-		internal static int   Background = 2;
+		public const float ZOffset = -0.001f; //offset between objects in depth.
+		internal static int Background = 2;
 		internal static float DrawZOffset; //current offset
 
 		private static Transform _holder;
-		
+
 #if !UNITY_2020_2_OR_NEWER && UNITY_EDITOR
 		private ProcessingLiteGP21()
 		{
@@ -468,18 +488,19 @@ namespace ProcessingLite
 		}
 	}
 
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 	[CustomEditor(typeof(ProcessingLiteGP21))]
 	public class ProcessingLiteEditor : Editor
 	{
 		private void OnEnable()
 		{
 			if (Application.isPlaying) return;
-			Debug.LogError("Improper use of ProcessingLiteGP21.\nProcessingLiteGP21 is not allowed to be assigned as a component.");
+			Debug.LogError("Improper use of ProcessingLiteGP21.\nProcessingLiteGP21 is not allowed to be assigned as a component.\nRemoving from Scene.");
+			Destroy(this);
 		}
 	}
-	#endif
-	
+#endif
+
 	public interface IObjectPooling
 	{
 		int CurrentID { get; set; }
@@ -729,7 +750,7 @@ namespace ProcessingLite
 			//Increment to next line in list
 			CurrentID = (CurrentID + 1) % GP21.MAXNumberOfObjects;
 		}
-		
+
 		public void Point(float x, float y, float PointSize)
 		{
 			ProcessingLiteGP21.DrawZOffset += ProcessingLiteGP21.ZOffset;
@@ -739,7 +760,7 @@ namespace ProcessingLite
 
 			//apply size and position
 			Transform transform = newSpriteRenderer.transform;
-			transform.position   = new Vector3(x, y, ProcessingLiteGP21.DrawZOffset);
+			transform.position = new Vector3(x, y, ProcessingLiteGP21.DrawZOffset);
 			transform.localScale = new Vector3(PointSize, PointSize, 1f);
 
 			//Increment to next line in list
