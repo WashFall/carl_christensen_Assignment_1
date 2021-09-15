@@ -17,7 +17,7 @@ public class Assignment2 : ProcessingLite.GP21
         
     }
 
-    int coordX = 0;
+    int coordX = 1;
     int coordY = 10;
 
     void parabolic()
