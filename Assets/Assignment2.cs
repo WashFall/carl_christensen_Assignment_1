@@ -17,16 +17,16 @@ public class Assignment2 : ProcessingLite.GP21
         
     }
 
-    int coordX = 1;
-    int coordY = 10;
+    int coordX = 1; // Coordinates to use in the loop
+    int coordY = 10; // The Height of the screen
 
-    void parabolic()
+    void parabolic() // A function to loop and draw lines
     {
         for(int i = 0; i < 11; i++)
         {
             Stroke(200, 200, 200);
 
-            if(i % 3 == 2)
+            if(i % 3 == 2) // Every third Line is a different color
             {
                 Stroke(0, 0, 0);
             }
