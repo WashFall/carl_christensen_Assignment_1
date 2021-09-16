@@ -17,14 +17,14 @@ public class Assignment3 : ProcessingLite.GP21
     // Update is called once per frame
     void Update()
     {
-        Background(Color.black); 
+        Background(Color.black);
         Circle(circlePosition.x, circlePosition.y, diameter); //Spawns circle
 
         // When mousebutton is pressed down and held
-        if (Input.GetMouseButton(0)) 
+        if (Input.GetMouseButton(0))
         {
             // Spawns Line between the circle and mouse position, and also saves some coordinates in vectors
-            Line(circlePosition.x, circlePosition.y, MouseX, MouseY); 
+            Line(circlePosition.x, circlePosition.y, MouseX, MouseY);
             offset = new Vector2(MouseX - circlePosition.x, MouseY - circlePosition.y);
             destination = new Vector2(MouseX, MouseY);
             Debug.Log(circlePosition);
@@ -50,6 +50,33 @@ public class Assignment3 : ProcessingLite.GP21
         float move = length * Time.deltaTime;
 
         // Moves the circle to the destination where mouse button was released
-        circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
+        if (circlePosition.x < Width - (diameter / 2) && circlePosition.y < Height - (diameter / 2) && circlePosition.x > diameter / 2 && circlePosition.y > diameter / 2)
+        {
+            circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
+        }
+        else if(circlePosition.x >= Width - (diameter / 2) || circlePosition.x <= 2f)
+        {
+            if (offset.x > 0)
+            {
+                destination.x -= offset.x;
+            }
+            else if (offset.x < 0)
+            {
+                destination.x += -offset.x;
+            }
+            circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
+        }
+        else if(circlePosition.y >= Height - (diameter / 2) || circlePosition.y <= 2f)
+        {
+            if (offset.y > 0)
+            {
+                destination.y -= offset.y;
+            }
+            else if(offset.y < 0)
+            {
+                destination.y += -offset.y;
+            }
+            circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
+        }
     }
 }
