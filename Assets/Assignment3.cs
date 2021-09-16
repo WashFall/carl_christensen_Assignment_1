@@ -54,6 +54,7 @@ public class Assignment3 : ProcessingLite.GP21
         {
             circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
         }
+        // This concerns bouncing of the edges on the x-axis
         else if(circlePosition.x >= Width - (diameter / 2) || circlePosition.x <= 2f)
         {
             if (offset.x > 0)
@@ -68,6 +69,7 @@ public class Assignment3 : ProcessingLite.GP21
             }
             circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
         }
+        // This concerns bouncing of the edges on the y-axis
         else if(circlePosition.y >= Height - (diameter / 2) || circlePosition.y <= 2f)
         {
             if (offset.y > 0)
