@@ -12,6 +12,7 @@ public class Assignment3 : ProcessingLite.GP21
     public Vector2 circlePosition;
     private float diameter = 2;
     private Vector2 offset;
+    private Vector2 destination;
 
     // Update is called once per frame
     void Update()
@@ -23,6 +24,7 @@ public class Assignment3 : ProcessingLite.GP21
         {
             Line(circlePosition.x, circlePosition.y, MouseX, MouseY);
             offset = new Vector2(MouseX - circlePosition.x, MouseY - circlePosition.y);
+            destination = new Vector2(MouseX, MouseY);
             Debug.Log(circlePosition);
         }
         if (Input.GetMouseButtonDown(0))
@@ -30,7 +32,7 @@ public class Assignment3 : ProcessingLite.GP21
             circlePosition.x = MouseX;
             circlePosition.y = MouseY;
         }
-        if (Input.GetMouseButtonUp(0))
+        if (!Input.GetMouseButton(0))
         {
             movement(offset);
         }
@@ -42,10 +44,9 @@ public class Assignment3 : ProcessingLite.GP21
     private void movement(Vector2 offset)
     {
         float length = Mathf.Sqrt((offset.x * offset.x) + (offset.y * offset.y));
-        for (float i = 0; i <= length; i += Time.deltaTime / length)
-        {
-            
-        }
+        float move = length * Time.deltaTime;
+
+        circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
     }
 
 }
