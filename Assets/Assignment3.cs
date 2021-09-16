@@ -58,11 +58,13 @@ public class Assignment3 : ProcessingLite.GP21
         {
             if (offset.x > 0)
             {
-                destination.x -= offset.x;
+                offset.x = destination.x - circlePosition.x;
+                destination.x = Width - offset.x;
             }
             else if (offset.x < 0)
             {
-                destination.x += -offset.x;
+                offset.x = destination.x - circlePosition.x;
+                destination.x = -offset.x;
             }
             circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
         }
@@ -70,11 +72,13 @@ public class Assignment3 : ProcessingLite.GP21
         {
             if (offset.y > 0)
             {
-                destination.y -= offset.y;
+                offset.y = destination.y - circlePosition.y;
+                destination.y = Height - offset.y;
             }
             else if(offset.y < 0)
             {
-                destination.y += -offset.y;
+                offset.y = destination.y - circlePosition.y;
+                destination.y = -offset.y;
             }
             circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
         }
