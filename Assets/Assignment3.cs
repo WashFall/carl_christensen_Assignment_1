@@ -49,6 +49,7 @@ public class Assignment3 : ProcessingLite.GP21
         float length = Mathf.Sqrt((offset.x * offset.x) + (offset.y * offset.y));
         float move = length * Time.deltaTime;
 
+        // If the circle moves outside the borders it teleports
         if(circlePosition.x < 1)
         {
             circlePosition.x = 0 + (diameter / 2);
@@ -72,14 +73,14 @@ public class Assignment3 : ProcessingLite.GP21
             circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
         }
         // This concerns bouncing of the edges on the x-axis
-        else if(circlePosition.x >= Width - (diameter / 2) || circlePosition.x <= 2f)
+        else if(circlePosition.x >= Width - (diameter / 2) || circlePosition.x <= 1f)
         {
             if (offset.x > 0)
             {
                 offset.x = destination.x - circlePosition.x;
                 destination.x = Width - offset.x;
             }
-            else if (offset.x < 0 + (diameter / 2))
+            else if (offset.x < 0)
             {
                 offset.x = destination.x - circlePosition.x;
                 destination.x = -offset.x;
@@ -87,14 +88,14 @@ public class Assignment3 : ProcessingLite.GP21
             circlePosition = Vector2.MoveTowards(circlePosition, destination, move);
         }
         // This concerns bouncing of the edges on the y-axis
-        else if(circlePosition.y >= Height - (diameter / 2) || circlePosition.y <= 2f)
+        else if(circlePosition.y >= Height - (diameter / 2) || circlePosition.y <= 1f)
         {
             if (offset.y > 0)
             {
                 offset.y = destination.y - circlePosition.y;
                 destination.y = Height - offset.y;
             }
-            else if(offset.y < 0 + (diameter /  2))
+            else if(offset.y < 0)
             {
                 offset.y = destination.y - circlePosition.y;
                 destination.y = -offset.y;
