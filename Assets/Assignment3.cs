@@ -49,6 +49,23 @@ public class Assignment3 : ProcessingLite.GP21
         float length = Mathf.Sqrt((offset.x * offset.x) + (offset.y * offset.y));
         float move = length * Time.deltaTime;
 
+        if(circlePosition.x < 1)
+        {
+            circlePosition.x = 0 + (diameter / 2);
+        }
+        else if (circlePosition.x > Width - (diameter / 2))
+        {
+            circlePosition.x = Width - (diameter / 2);
+        }
+        
+        if(circlePosition.y < 1)
+        {
+            circlePosition.y = 0 + (diameter / 2);
+        }
+        else if(circlePosition.y > Height - (diameter / 2))
+        {
+            circlePosition.y = Height - (diameter / 2);
+        }
         // Moves the circle to the destination where mouse button was released
         if (circlePosition.x < Width - (diameter / 2) && circlePosition.y < Height - (diameter / 2) && circlePosition.x > diameter / 2 && circlePosition.y > diameter / 2)
         {
@@ -62,7 +79,7 @@ public class Assignment3 : ProcessingLite.GP21
                 offset.x = destination.x - circlePosition.x;
                 destination.x = Width - offset.x;
             }
-            else if (offset.x < 0)
+            else if (offset.x < 0 + (diameter / 2))
             {
                 offset.x = destination.x - circlePosition.x;
                 destination.x = -offset.x;
@@ -77,7 +94,7 @@ public class Assignment3 : ProcessingLite.GP21
                 offset.y = destination.y - circlePosition.y;
                 destination.y = Height - offset.y;
             }
-            else if(offset.y < 0)
+            else if(offset.y < 0 + (diameter /  2))
             {
                 offset.y = destination.y - circlePosition.y;
                 destination.y = -offset.y;
