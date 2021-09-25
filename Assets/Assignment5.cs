@@ -4,31 +4,45 @@ using UnityEngine;
 
 public class Assignment5 : ProcessingLite.GP21
 {
-    private float acc = 5f;
-    private float speed = 3f;
-    private float maxSpeed = 10f;
-
-    private Vector2 char1;
-    private Vector2 input;
-
-    Player player = new Player();
+    Player player;
     Ball ball;
 
     public void Start()
     {
-        char1 = new Vector2(Width / 2, Height / 2);
+        player = new Player(Width / 2, Height / 2);
+        ball = new Ball(5, 3);
 
     }
 
     public void Update()
     {
         Background(0);
-        Move();
-        player.Draw(char1);
-        ball = new Ball(5, 3);
-        ball.Draw();
+        player.Move();
+        player.Draw();
         ball.UpdatePos();
+        ball.Draw();
+    }
 
+
+}
+
+public class Player : ProcessingLite.GP21
+{
+    private int diameter = 1;
+    private float speed = 3f;
+    private float maxSpeed = 10f;
+    private float acc = 5f;
+
+    private Vector2 input;
+    private Vector2 position;
+    public Player(float x, float y)
+    {
+        position = new Vector2(x, y);
+    }
+    public void Draw()
+    {
+        Fill(255);
+        Circle(position.x, position.y, diameter);
     }
 
     public void Move()
@@ -37,9 +51,8 @@ public class Assignment5 : ProcessingLite.GP21
 
         if (input.magnitude != 0)
         {
-            char1.x += speed * Input.GetAxis("Horizontal") * Time.deltaTime;
-            char1.y += speed * Input.GetAxis("Vertical") * Time.deltaTime;
-
+            position.x += speed * Input.GetAxis("Horizontal") * Time.deltaTime;
+            position.y += speed * Input.GetAxis("Vertical") * Time.deltaTime;
 
             if (speed < maxSpeed)
             {
@@ -52,17 +65,7 @@ public class Assignment5 : ProcessingLite.GP21
         {
             speed = 3f;
         }
-    }
-}
-
-public class Player : ProcessingLite.GP21
-{
-    private int diameter = 1;
-
-    public void Draw(Vector2 char1)
-    {
-        Fill(255);
-        Circle(char1.x, char1.y, diameter);
+        position = new Vector2(position.x, position.y);
     }
 }
 
