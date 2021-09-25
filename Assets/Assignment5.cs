@@ -7,6 +7,7 @@ public class Assignment5 : ProcessingLite.GP21
     int ballcount = 10;
     Player player;
     Ball[] balls;
+    public GameObject gameOver;
 
     public void Start()
     {
@@ -28,6 +29,11 @@ public class Assignment5 : ProcessingLite.GP21
             ball.UpdatePos();
             ball.Draw();
             player.CircleCollision(ball);
+
+            if(player.CircleCollision(ball) == true)
+            {
+                gameOver.SetActive(true);
+            }
         }
     }
 }
