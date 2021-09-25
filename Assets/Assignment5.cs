@@ -5,8 +5,6 @@ using UnityEngine;
 public class Assignment5 : ProcessingLite.GP21
 {
     int ballcount = 10;
-    float playerSize = 1f;
-    float ballSize = 0.75f;
     Player player;
     Ball[] balls;
 
@@ -29,8 +27,7 @@ public class Assignment5 : ProcessingLite.GP21
         {
             ball.UpdatePos();
             ball.Draw();
-            player.CircleCollision(player.position.x, player.position.y, playerSize,
-                ball.position.x, ball.position.y, ballSize);
+            player.CircleCollision(ball);
         }
     }
 }
@@ -38,6 +35,7 @@ public class Assignment5 : ProcessingLite.GP21
 public class Player : ProcessingLite.GP21
 {
     private int diameter = 1;
+    private float radius = 0.5f;
     private float speed = 3f;
     private float maxSpeed = 10f;
     private float acc = 5f;
@@ -56,21 +54,23 @@ public class Player : ProcessingLite.GP21
         Circle(position.x, position.y, diameter);
     }
 
-    public bool CircleCollision(float x1, float y1, float size1, float x2, float y2, float size2)
+    public bool CircleCollision(Ball ball)
     {
-        float maxDistance = size1 + size2;
+        float maxDistance = radius + ball.ballRadius;
 
-        if(Mathf.Abs(x1 - x2) > maxDistance || Mathf.Abs(y1 - y2) > maxDistance)
+        if(Mathf.Abs(position.x - ball.position.x) > maxDistance 
+            || 
+           Mathf.Abs(position.y - ball.position.y) > maxDistance)
         {
             return false;
         }
-        else if(Vector2.Distance(new Vector2(x1, y1), new Vector2(x2, y2)) > maxDistance)
+        else if(Vector2.Distance(new Vector2(position.x, position.y), 
+                new Vector2(ball.position.x, ball.position.y)) > maxDistance)
         {
             return false;
         }
         else
         {
-            Debug.Log("Works");
             return true;
         }
     }
@@ -97,13 +97,13 @@ public class Player : ProcessingLite.GP21
     }
 }
 
-class Ball : ProcessingLite.GP21
+public class Ball : ProcessingLite.GP21
 {
     //Our class variables
     public Vector2 position; //Ball position
     Vector2 velocity; //Ball direction
     float ballDiameter = 0.75f; //Diameter of ball
-    float ballRadius = 0.375f; //Radius of ball
+    public float ballRadius = 0.375f; //Radius of ball
 
     //Ball Constructor, called when we type new Ball(x, y);
     public Ball(float x, float y)
