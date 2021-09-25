@@ -31,11 +31,14 @@ public class Assignment4 : ProcessingLite.GP21
         {
             char1.x += speed * Input.GetAxis("Horizontal") * Time.deltaTime;
             char1.y += speed * Input.GetAxis("Vertical") * Time.deltaTime;
+
+
             if (speed < maxSpeed)
             {
                 speed += acc * Time.deltaTime;
             }
-            
+
+
         }
         else if (input.magnitude == 0)
         {
