@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Assignment5 : ProcessingLite.GP21
 {
-    Player player;
     int ballcount = 10;
+    Player player;
     Ball[] balls;
 
     public void Start()
@@ -29,8 +29,6 @@ public class Assignment5 : ProcessingLite.GP21
             ball.Draw();
         }
     }
-
-
 }
 
 public class Player : ProcessingLite.GP21
@@ -42,10 +40,12 @@ public class Player : ProcessingLite.GP21
 
     private Vector2 input;
     private Vector2 position;
+
     public Player(float x, float y)
     {
         position = new Vector2(x, y);
     }
+
     public void Draw()
     {
         Fill(255);
@@ -65,8 +65,6 @@ public class Player : ProcessingLite.GP21
             {
                 speed += acc * Time.deltaTime;
             }
-
-
         }
         else if (input.magnitude == 0)
         {
@@ -81,6 +79,8 @@ class Ball : ProcessingLite.GP21
     //Our class variables
     Vector2 position; //Ball position
     Vector2 velocity; //Ball direction
+    float ballDiameter = 0.75f; //Diameter of ball
+    float ballRadius = 0.375f; //Radius of ball
 
     //Ball Constructor, called when we type new Ball(x, y);
     public Ball(float x, float y)
@@ -98,18 +98,22 @@ class Ball : ProcessingLite.GP21
     public void Draw()
     {
         Fill(0, 255, 125);
-        Circle(position.x, position.y, 1);
+        Circle(position.x, position.y, ballDiameter);
     }
 
     //Update our ball
     public void UpdatePos()
     {
         position += velocity * Time.deltaTime;
-        if(position.x > Width - 0.5f || position.x < 0.5f)
+
+        //Change direction at edge of screen width
+        if(position.x > Width - ballRadius || position.x < ballRadius)
         {
             velocity.x *= -1;
         }
-        if(position.y > Height - 0.5f || position.y < 0.5f)
+
+        //Change direction at edge of screen height
+        if(position.y > Height - ballRadius || position.y < ballRadius)
         {
             velocity.y *= -1;
         }
