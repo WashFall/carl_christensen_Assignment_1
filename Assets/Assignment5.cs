@@ -5,13 +5,17 @@ using UnityEngine;
 public class Assignment5 : ProcessingLite.GP21
 {
     Player player;
-    Ball ball;
+    int ballcount = 10;
+    Ball[] balls;
 
     public void Start()
     {
         player = new Player(Width / 2, Height / 2);
-        ball = new Ball(5, 3);
-
+        balls = new Ball[ballcount];
+        for(int i = 0; i < balls.Length; i++)
+        {
+            balls[i] = new Ball(3, 3);
+        }
     }
 
     public void Update()
@@ -19,8 +23,11 @@ public class Assignment5 : ProcessingLite.GP21
         Background(0);
         player.Move();
         player.Draw();
-        ball.UpdatePos();
-        ball.Draw();
+        foreach (Ball ball in balls)
+        {
+            ball.UpdatePos();
+            ball.Draw();
+        }
     }
 
 
@@ -83,8 +90,8 @@ class Ball : ProcessingLite.GP21
 
         //Create the velocity vector and give it a random direction.
         velocity = new Vector2();
-        velocity.x = Random.Range(0, 11) - 5;
-        velocity.y = Random.Range(0, 11) - 5;
+        velocity.x = Random.Range(0f, 11f) - 5;
+        velocity.y = Random.Range(0f, 11f) - 5;
     }
 
     //Draw our ball
@@ -98,6 +105,13 @@ class Ball : ProcessingLite.GP21
     public void UpdatePos()
     {
         position += velocity * Time.deltaTime;
-
+        if(position.x > Width - 0.5f || position.x < 0.5f)
+        {
+            velocity.x *= -1;
+        }
+        if(position.y > Height - 0.5f || position.y < 0.5f)
+        {
+            velocity.y *= -1;
+        }
     }
 }
