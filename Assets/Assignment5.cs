@@ -5,6 +5,8 @@ using UnityEngine;
 public class Assignment5 : ProcessingLite.GP21
 {
     int ballcount = 10;
+    float playerSize = 1f;
+    float ballSize = 0.75f;
     Player player;
     Ball[] balls;
 
@@ -12,7 +14,7 @@ public class Assignment5 : ProcessingLite.GP21
     {
         player = new Player(Width / 2, Height / 2);
         balls = new Ball[ballcount];
-        for(int i = 0; i < balls.Length; i++)
+        for (int i = 0; i < balls.Length; i++)
         {
             balls[i] = new Ball(3, 3);
         }
@@ -27,6 +29,8 @@ public class Assignment5 : ProcessingLite.GP21
         {
             ball.UpdatePos();
             ball.Draw();
+            player.CircleCollision(player.position.x, player.position.y, playerSize,
+                ball.position.x, ball.position.y, ballSize);
         }
     }
 }
@@ -39,7 +43,7 @@ public class Player : ProcessingLite.GP21
     private float acc = 5f;
 
     private Vector2 input;
-    private Vector2 position;
+    public Vector2 position;
 
     public Player(float x, float y)
     {
@@ -50,6 +54,25 @@ public class Player : ProcessingLite.GP21
     {
         Fill(255);
         Circle(position.x, position.y, diameter);
+    }
+
+    public bool CircleCollision(float x1, float y1, float size1, float x2, float y2, float size2)
+    {
+        float maxDistance = size1 + size2;
+
+        if(Mathf.Abs(x1 - x2) > maxDistance || Mathf.Abs(y1 - y2) > maxDistance)
+        {
+            return false;
+        }
+        else if(Vector2.Distance(new Vector2(x1, y1), new Vector2(x2, y2)) > maxDistance)
+        {
+            return false;
+        }
+        else
+        {
+            Debug.Log("Works");
+            return true;
+        }
     }
 
     public void Move()
@@ -77,7 +100,7 @@ public class Player : ProcessingLite.GP21
 class Ball : ProcessingLite.GP21
 {
     //Our class variables
-    Vector2 position; //Ball position
+    public Vector2 position; //Ball position
     Vector2 velocity; //Ball direction
     float ballDiameter = 0.75f; //Diameter of ball
     float ballRadius = 0.375f; //Radius of ball
@@ -107,13 +130,13 @@ class Ball : ProcessingLite.GP21
         position += velocity * Time.deltaTime;
 
         //Change direction at edge of screen width
-        if(position.x > Width - ballRadius || position.x < ballRadius)
+        if (position.x > Width - ballRadius || position.x < ballRadius)
         {
             velocity.x *= -1;
         }
 
         //Change direction at edge of screen height
-        if(position.y > Height - ballRadius || position.y < ballRadius)
+        if (position.y > Height - ballRadius || position.y < ballRadius)
         {
             velocity.y *= -1;
         }
