@@ -4,19 +4,14 @@ using UnityEngine;
 
 public class Assignment5 : ProcessingLite.GP21
 {
-    int ballcount = 10;
-    Player player;
-    Ball[] balls;
+    BallManager manager = new BallManager();
+    public Player player;
     public GameObject gameOver;
 
     public void Start()
     {
         player = new Player(Width / 2, Height / 2);
-        balls = new Ball[ballcount];
-        for (int i = 0; i < balls.Length; i++)
-        {
-            balls[i] = new Ball(3, 3);
-        }
+        manager.ballCall();
     }
 
     public void Update()
@@ -24,17 +19,7 @@ public class Assignment5 : ProcessingLite.GP21
         Background(0);
         player.Move();
         player.Draw();
-        foreach (Ball ball in balls)
-        {
-            ball.UpdatePos();
-            ball.Draw();
-            player.CircleCollision(ball);
-
-            if(player.CircleCollision(ball) == true)
-            {
-                gameOver.SetActive(true);
-            }
-        }
+        manager.ballDraw(player, gameOver);
     }
 }
 
@@ -145,6 +130,37 @@ public class Ball : ProcessingLite.GP21
         if (position.y > Height - ballRadius || position.y < ballRadius)
         {
             velocity.y *= -1;
+        }
+    }
+}
+
+public class BallManager : ProcessingLite.GP21
+{
+    Assignment5 main;
+    Ball[] balls;
+    int ballcount = 10;
+
+    public void ballCall()
+    {
+        balls = new Ball[ballcount];
+        for (int i = 0; i < balls.Length; i++)
+        {
+            balls[i] = new Ball(3, 3);
+        }
+    }
+
+    public void ballDraw(Player player, GameObject gameOver)
+    {
+        foreach (Ball ball in balls)
+        {
+            ball.UpdatePos();
+            ball.Draw();
+            player.CircleCollision(ball);
+
+            if (player.CircleCollision(ball) == true)
+            {
+                gameOver.SetActive(true);
+            }
         }
     }
 }
