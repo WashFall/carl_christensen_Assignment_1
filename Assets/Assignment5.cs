@@ -10,8 +10,9 @@ public class Assignment5 : ProcessingLite.GP21
 
     public void Start()
     {
+        Application.targetFrameRate = 300;
         player = new Player(Width / 2, Height / 2);
-        manager.ballCall();
+        manager.BallCall();
     }
 
     public void Update()
@@ -19,7 +20,8 @@ public class Assignment5 : ProcessingLite.GP21
         Background(0);
         player.Move();
         player.Draw();
-        manager.ballDraw(player, gameOver);
+        manager.NewBall();
+        manager.BallDraw(player, gameOver);
     }
 }
 
@@ -93,8 +95,8 @@ public class Ball : ProcessingLite.GP21
     //Our class variables
     public Vector2 position; //Ball position
     Vector2 velocity; //Ball direction
-    float ballDiameter = 0.75f; //Diameter of ball
-    public float ballRadius = 0.375f; //Radius of ball
+    float ballDiameter = 0.5f; //Diameter of ball
+    public float ballRadius = 0.25f; //Radius of ball
 
     //Ball Constructor, called when we type new Ball(x, y);
     public Ball(float x, float y)
@@ -136,11 +138,12 @@ public class Ball : ProcessingLite.GP21
 
 public class BallManager : ProcessingLite.GP21
 {
-    Assignment5 main;
     Ball[] balls;
-    int ballcount = 10;
+    int ballcount = 100;
+    int arrayPosition = 10;
+    int framecount = 0;
 
-    public void ballCall()
+    public void BallCall()
     {
         balls = new Ball[ballcount];
         for (int i = 0; i < balls.Length; i++)
@@ -149,18 +152,30 @@ public class BallManager : ProcessingLite.GP21
         }
     }
 
-    public void ballDraw(Player player, GameObject gameOver)
+    public void BallDraw(Player player, GameObject gameOver)
     {
-        foreach (Ball ball in balls)
+        for(int i = 0; i < arrayPosition; i++)
         {
-            ball.UpdatePos();
-            ball.Draw();
-            player.CircleCollision(ball);
+            balls[i].UpdatePos();
+            balls[i].Draw();
+            player.CircleCollision(balls[i]);
 
-            if (player.CircleCollision(ball) == true)
+            if (player.CircleCollision(balls[i]) == true)
             {
                 gameOver.SetActive(true);
             }
+        }
+
+    }
+
+    public void NewBall()
+    {
+        framecount++;
+
+        if(framecount == 900 && arrayPosition < 100)
+        {
+            arrayPosition++;
+            framecount = 0;
         }
     }
 }
