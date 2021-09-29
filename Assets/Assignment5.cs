@@ -7,6 +7,7 @@ public class Assignment5 : ProcessingLite.GP21
     BallManager manager = new BallManager();
     public Player player;
     public GameObject gameOver;
+    public GameObject restart;
 
     public void Start()
     {
@@ -21,7 +22,21 @@ public class Assignment5 : ProcessingLite.GP21
         player.Move();
         player.Draw();
         manager.NewBall();
-        manager.BallDraw(player, gameOver);
+        manager.BallDraw(player, gameOver, restart);
+        Restart();
+    }
+
+    public void Restart()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            restart.SetActive(false);
+            gameOver.SetActive(false);
+            player.alive = true;
+            manager.framecount = 0;
+            manager.arrayPosition = 10;
+            Start();
+        }
     }
 }
 
@@ -32,6 +47,7 @@ public class Player : ProcessingLite.GP21
     private float speed = 3f;
     private float maxSpeed = 10f;
     private float acc = 5f;
+    public bool alive = true;
 
     private Vector2 input;
     public Vector2 position;
@@ -51,13 +67,13 @@ public class Player : ProcessingLite.GP21
     {
         float maxDistance = radius + ball.ballRadius;
 
-        if(Mathf.Abs(position.x - ball.position.x) > maxDistance 
-            || 
+        if (Mathf.Abs(position.x - ball.position.x) > maxDistance
+            ||
            Mathf.Abs(position.y - ball.position.y) > maxDistance)
         {
             return false;
         }
-        else if(Vector2.Distance(new Vector2(position.x, position.y), 
+        else if (Vector2.Distance(new Vector2(position.x, position.y),
                 new Vector2(ball.position.x, ball.position.y)) > maxDistance)
         {
             return false;
@@ -70,23 +86,26 @@ public class Player : ProcessingLite.GP21
 
     public void Move()
     {
-        input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-
-        if (input.magnitude != 0)
+        if (alive)
         {
-            position.x += speed * Input.GetAxis("Horizontal") * Time.deltaTime;
-            position.y += speed * Input.GetAxis("Vertical") * Time.deltaTime;
-
-            if (speed < maxSpeed)
+            input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            if (input.magnitude != 0)
             {
-                speed += acc * Time.deltaTime;
+                position.x += speed * Input.GetAxis("Horizontal") * Time.deltaTime;
+                position.y += speed * Input.GetAxis("Vertical") * Time.deltaTime;
+
+                if (speed < maxSpeed)
+                {
+                    speed += acc * Time.deltaTime;
+                }
             }
+            else if (input.magnitude == 0)
+            {
+                speed = 3f;
+            }
+            position = new Vector2(position.x, position.y);
         }
-        else if (input.magnitude == 0)
-        {
-            speed = 3f;
-        }
-        position = new Vector2(position.x, position.y);
+
     }
 }
 
@@ -97,6 +116,7 @@ public class Ball : ProcessingLite.GP21
     Vector2 velocity; //Ball direction
     float ballDiameter = 0.5f; //Diameter of ball
     public float ballRadius = 0.25f; //Radius of ball
+    Color ballColor;
 
     //Ball Constructor, called when we type new Ball(x, y);
     public Ball(float x, float y)
@@ -140,8 +160,8 @@ public class BallManager : ProcessingLite.GP21
 {
     Ball[] balls;
     int ballcount = 100;
-    int arrayPosition = 10;
-    int framecount = 0;
+    public int arrayPosition = 10;
+    public int framecount = 0;
 
     public void BallCall()
     {
@@ -152,9 +172,9 @@ public class BallManager : ProcessingLite.GP21
         }
     }
 
-    public void BallDraw(Player player, GameObject gameOver)
+    public void BallDraw(Player player, GameObject gameOver, GameObject restart)
     {
-        for(int i = 0; i < arrayPosition; i++)
+        for (int i = 0; i < arrayPosition; i++)
         {
             balls[i].UpdatePos();
             balls[i].Draw();
@@ -163,6 +183,8 @@ public class BallManager : ProcessingLite.GP21
             if (player.CircleCollision(balls[i]) == true)
             {
                 gameOver.SetActive(true);
+                restart.SetActive(true);
+                player.alive = false;
             }
         }
 
@@ -172,7 +194,7 @@ public class BallManager : ProcessingLite.GP21
     {
         framecount++;
 
-        if(framecount == 900 && arrayPosition < 100)
+        if (framecount == 900 && arrayPosition < 100)
         {
             arrayPosition++;
             framecount = 0;
