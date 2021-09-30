@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 namespace ProcessingLite
 {
@@ -19,6 +20,7 @@ namespace ProcessingLite
 		public static float PStrokeWeight = 1;           //Processing
 		public static Color PStroke = Color.white; //Processing
 		public static Color PFill = Color.black; //Processing
+		public static int PFontSize = 14;
 
 		internal static bool DrawStroke = true;
 		internal static bool DrawFill = true;
@@ -28,6 +30,7 @@ namespace ProcessingLite
 		private PRect _pRect;
 		private PShape _pShape;
 		private PEllipse _pEllipse;
+		private PText _pText;
 
 		private Camera _cameraRef;
 
@@ -40,6 +43,7 @@ namespace ProcessingLite
 			_pRect?.LateUpdate();
 			_pShape?.LateUpdate();
 			_pEllipse?.LateUpdate();
+			_pText?.LateUpdate();
 		}
 
 		public float Width
@@ -254,7 +258,7 @@ namespace ProcessingLite
 		/// </summary>
 		/// <param name="x">x-coordinate of the point</param>
 		/// <param name="y">y-coordinate of the point</param>
-		public void Point(int x, int y)
+		public void Point(float x, float y)
 		{
 			_pRect ??= new PRect();
 			_pRect.Point(x, y, PointSize);
@@ -295,6 +299,20 @@ namespace ProcessingLite
 			}
 			else _pEllipse.Circle(x, y, diameter);
 		}
+
+		/// <summary>
+		/// Draws Text to the screen.
+		/// </summary>
+		/// <param name="string">String to display</param>
+		/// <param name="x">x-coordinate of the text</param>
+		/// <param name="y">y-coordinate of the text</param>
+		public void Text(string text, float x, float y)
+		{
+			_pText ??= new PText();
+			var pos = _cameraRef.WorldToScreenPoint(new Vector3(x, y, 0));
+			_pText.Text(text, pos.x, pos.y);
+		}
+
 
 		/// <summary>
 		/// Using the BeginShape() and EndShape() functions allow creating more complex forms.
@@ -359,6 +377,15 @@ namespace ProcessingLite
 		{
 			PStrokeWeight = Mathf.Max(weight, 0f);
 			DrawStroke = PStrokeWeight != 0 && PStroke.a != 0;
+		}
+
+		/// <summary>
+		/// Sets the font size of the following text elements.
+		/// </summary>
+		/// <param name="size">font size</param>
+		public void TextSize(int size)
+		{
+			PFontSize = Mathf.Max(size, 0);
 		}
 
 		/// <summary>
@@ -432,6 +459,7 @@ namespace ProcessingLite
 		internal static float DrawZOffset; //current offset
 
 		private static Transform _holder;
+		private static Transform _canvas;
 
 #if !UNITY_2020_2_OR_NEWER && UNITY_EDITOR
 		private ProcessingLiteGP21()
@@ -462,6 +490,20 @@ namespace ProcessingLite
 				var tmp = new GameObject("Holder");
 				tmp.AddComponent<ProcessingLiteGP21>();
 				return _holder = tmp.transform;
+			}
+		}
+
+		public static Transform Canvas
+		{
+			get
+			{
+				if (_canvas is { }) return _canvas;
+				var tmp = new GameObject("Canvas");
+				tmp.AddComponent<Canvas>();
+				tmp.AddComponent<CanvasScaler>();
+				tmp.AddComponent<GraphicRaycaster>();
+				tmp.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+				return _canvas = tmp.transform;
 			}
 		}
 
@@ -855,12 +897,73 @@ namespace ProcessingLite
 				return _sprite[CurrentID];
 			}
 
-			var newObject = new GameObject("Rect" + (_sprite.Count + 1).ToString("000"));
+			var newObject = new GameObject("Circle" + (_sprite.Count + 1).ToString("000"));
 			newObject.transform.parent = _holder ? _holder : _holder = ProcessingLiteGP21.Holder;
 			var newSpriteRenderer = newObject.AddComponent<SpriteRenderer>();
 			newSpriteRenderer.sprite = _squareTexture ?? GetSquareTexture();
 			_sprite.Add(newSpriteRenderer);
 			return newSpriteRenderer;
+		}
+	}
+
+	public class PText : IObjectPooling
+	{
+		private readonly List<Text> _text = new List<Text>();
+
+		private Transform _canvas;
+		private Font _font;
+
+		public int CurrentID { get; set; }
+
+		public void LateUpdate()
+		{
+			for (int i = CurrentID; i < _text.Count; i++)
+				if (_text[i].gameObject.activeSelf)
+					_text[i].gameObject.SetActive(false);
+				else break;
+
+			CurrentID = 0;
+		}
+
+		private Font GetFont() => _font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+		//AssetDatabase.LoadAssetAtPath<Font>(
+		//	"Packages/com.unity.2d.sprite/Editor/ObjectMenuCreation/DefaultAssets/Fonts/Arial.ttf");
+
+		public void Text(string text, float x, float y, bool swapColor = false)
+		{
+			Text newTextComponent = GetTextComponent();
+			newTextComponent.text = text;
+			newTextComponent.color = GP21.PFill;
+			newTextComponent.font = _font ?? GetFont();
+			newTextComponent.alignment = TextAnchor.MiddleCenter;
+			newTextComponent.horizontalOverflow = HorizontalWrapMode.Overflow;
+			newTextComponent.verticalOverflow = VerticalWrapMode.Overflow;
+			newTextComponent.fontSize = GP21.PFontSize;
+
+			//apply size and position
+			RectTransform transform = newTextComponent.GetComponent<RectTransform>();
+			transform.anchorMin = Vector2.zero;
+			transform.anchorMax = Vector2.zero;
+			transform.position = new Vector3(x, y, ProcessingLiteGP21.DrawZOffset);
+
+			CurrentID = (CurrentID + 1) % GP21.MAXNumberOfObjects;
+
+		}
+
+		private Text GetTextComponent()
+		{
+			if (CurrentID < _text.Count && _text[CurrentID] is { })
+			{
+				_text[CurrentID].gameObject.SetActive(true);
+				return _text[CurrentID];
+			}
+
+			var newObject = new GameObject("Text" + (_text.Count + 1).ToString("000"));
+			newObject.transform.parent = _canvas ? _canvas : _canvas = ProcessingLiteGP21.Canvas;
+			var newTextComponent = newObject.AddComponent<Text>();
+
+			_text.Add(newTextComponent);
+			return newTextComponent;
 		}
 	}
 }
