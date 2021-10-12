@@ -24,17 +24,6 @@ class CarChr : IRandomWalker
 
     public Vector2 Movement()
     {
-        //if (walkerPos.x == width - 1)
-        //    walkerPos.x += -1;
-        //else if (walkerPos.x == 1)
-        //    walkerPos.x += 1;
-        //else if (walkerPos.y == height - 1)
-        //    walkerPos.y += -1;
-        //else if (walkerPos.y == 1)
-        //    walkerPos.y += 1;
-
-
-
         switch (Random.Range(0, 4))
         {
             case 0:
